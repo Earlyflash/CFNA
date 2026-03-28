@@ -36,44 +36,35 @@ export function TurnProgressGraphic({ progress, subtitle }: Props) {
         />
       </div>
 
-      <div className="mt-8">
-        <div className="flex items-start justify-between gap-1 sm:gap-2">
-          {TURN_MILESTONES.map((m, i) => {
+      <div className="relative mt-10 px-1">
+        <div
+          className="absolute left-[10%] right-[10%] top-5 hidden h-1 rounded-full bg-sand-200 sm:block"
+          aria-hidden
+        />
+        <div className="relative grid grid-cols-5 gap-1 sm:gap-2">
+          {TURN_MILESTONES.map((m) => {
             const done = milestoneDone(progress, m.key);
-            const prevDone = i === 0 ? true : milestoneDone(progress, TURN_MILESTONES[i - 1]!.key);
-            const segActive = done || prevDone;
             return (
-              <div key={m.key} className="flex min-w-0 flex-1 items-start">
-                {i > 0 ? (
-                  <div
-                    className={[
-                      "mx-0.5 mt-6 hidden h-0.5 flex-1 sm:mx-1 sm:block",
-                      segActive ? "bg-sand-600" : "bg-sand-200",
-                    ].join(" ")}
-                    aria-hidden
-                  />
-                ) : null}
-                <div className="flex w-full min-w-0 flex-col items-center text-center">
-                  <div
-                    className={[
-                      "flex h-11 w-11 items-center justify-center rounded-full border-2 font-mono text-xs font-bold shadow-sm sm:h-12 sm:w-12 sm:text-sm",
-                      done
-                        ? "border-sand-800 bg-sand-800 text-sand-50"
-                        : "border-sand-300 bg-white text-sand-400",
-                    ].join(" ")}
-                    title={m.label}
-                  >
-                    {m.short}
-                  </div>
-                  <p
-                    className={[
-                      "mt-2 px-0.5 text-[10px] font-medium leading-tight sm:text-xs",
-                      done ? "text-sand-900" : "text-sand-500",
-                    ].join(" ")}
-                  >
-                    {m.label}
-                  </p>
+              <div key={m.key} className="flex flex-col items-center text-center">
+                <div
+                  className={[
+                    "relative z-[1] flex h-11 w-11 items-center justify-center rounded-full border-2 font-mono text-xs font-bold shadow-md sm:h-12 sm:w-12 sm:text-sm",
+                    done
+                      ? "border-sand-800 bg-sand-800 text-sand-50"
+                      : "border-sand-300 bg-white text-sand-400",
+                  ].join(" ")}
+                  title={m.label}
+                >
+                  {m.short}
                 </div>
+                <p
+                  className={[
+                    "mt-2 px-0.5 text-[10px] font-medium leading-tight sm:text-xs",
+                    done ? "text-sand-900" : "text-sand-500",
+                  ].join(" ")}
+                >
+                  {m.label}
+                </p>
               </div>
             );
           })}
