@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Campaign {
+  id             String         @id @default(cuid())
+  title          String
+  tagline        String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  sessionEntries SessionEntry[]
+}
+
+enum SessionSide {
+  AXIS
+  ALLIED
+}
+
+model SessionEntry {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  campaignId String
+
+  /// In-game week / turn index (CNA: one Game-Turn ≈ one week).
+  gameTurn Int
+
+  /// Which faction filed this log (both sides can post).
+  side SessionSide
+
+  /// Real-world session when play happened.
+  playedAt DateTime
+
+  title       String
+  summary     String
+  podcastUrl  String?
+  podcastNote String?
+
+  /// Segments marked complete during this session (aggregated per turn for the graphic).
+  doneInitiative Boolean @default(false)
+  doneNaval      Boolean @default(false)
+  doneOpStage1   Boolean @default(false)
+  doneOpStage2   Boolean @default(false)
+  doneOpStage3   Boolean @default(false)
+
+  images SessionImage[]
+}
+
+model SessionImage {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  sessionEntry   SessionEntry @relation(fields: [sessionEntryId], references: [id], onDelete: Cascade)
+  sessionEntryId String
+
+  /// Public URL path e.g. /uploads/abc.jpg
+  url          String
+  originalName String
+}
