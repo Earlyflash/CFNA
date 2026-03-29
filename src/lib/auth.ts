@@ -44,7 +44,7 @@ export async function getPublisherUsername(): Promise<string | null> {
 
 const cookieBase = () => ({
   httpOnly: true as const,
-  sameSite: "lax" as const,
+  sameSite: "strict" as const,
   secure: process.env.NODE_ENV === "production",
   path: "/",
 });

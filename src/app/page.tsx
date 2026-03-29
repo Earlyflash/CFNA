@@ -63,6 +63,7 @@ export default async function HomePage({ searchParams }: PageProps) {
         id: e.id,
         title: e.title,
         playedAt: e.playedAt,
+        publishedBy: e.publishedBy ?? null,
       })),
     };
   });

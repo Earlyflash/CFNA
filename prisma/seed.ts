@@ -247,12 +247,14 @@ async function main() {
     throw new Error(`RSS cursor ${rssCursor} !== ${PODCAST_COUNT}`);
   }
 
-  for (const e of entries) {
+  for (let i = 0; i < entries.length; i++) {
+    const e = entries[i]!;
     const playedAt = new Date(base);
     playedAt.setUTCDate(playedAt.getUTCDate() + e.offsetDays);
     await prisma.sessionEntry.create({
       data: {
         campaignId: campaign.id,
+        publishedBy: i % 2 === 0 ? "andy" : "james",
         gameTurn: e.gameTurn,
         playedAt,
         title: e.title,

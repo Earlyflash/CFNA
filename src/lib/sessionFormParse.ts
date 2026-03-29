@@ -15,6 +15,18 @@ function parseBool(v: FormDataEntryValue | null): boolean {
   return v === "on" || v === "true" || v === "1";
 }
 
+function parsePublicHttpUrl(v: FormDataEntryValue | null): string | null {
+  const raw = String(v ?? "").trim();
+  if (!raw) return null;
+  try {
+    const url = new URL(raw);
+    if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
+
 export type ParsedSessionFormFields = {
   campaignId: string;
   gameTurn: number;
@@ -50,7 +62,7 @@ export function parseSessionFormFields(formData: FormData): ParsedSessionFormFie
   const playedAt = playedAtRaw ? new Date(playedAtRaw) : new Date();
   const title = String(formData.get("title") ?? "").trim();
   const summary = String(formData.get("summary") ?? "").trim();
-  const podcastUrl = String(formData.get("podcastUrl") ?? "").trim() || null;
+  const podcastUrl = parsePublicHttpUrl(formData.get("podcastUrl"));
 
   const episodeParsed = parseInt(String(formData.get("episodeNumber") ?? ""), 10);
   const episodeNumber = Number.isFinite(episodeParsed) && episodeParsed >= 1 ? episodeParsed : 1;

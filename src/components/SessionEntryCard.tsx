@@ -54,7 +54,15 @@ export function SessionEntryCard({ entry: e, showTurnBadge = true, showFullViewL
             ) : (
               <h3 className="font-display mt-3 text-xl font-semibold text-wwam-ink sm:text-2xl">{e.title}</h3>
             )}
-            <p className="mt-1 text-xs font-medium text-wwam-dune">{formatDate(e.playedAt)}</p>
+            <p className="mt-1 text-xs font-medium text-wwam-dune">
+              {formatDate(e.playedAt)}
+              {e.publishedBy ? (
+                <>
+                  {" "}
+                  · by <span className="text-wwam-ink/80">{e.publishedBy}</span>
+                </>
+              ) : null}
+            </p>
           </div>
           <SessionFlowMilestoneDots entry={e} />
         </div>

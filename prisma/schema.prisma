@@ -38,6 +38,9 @@ model SessionEntry {
   /// Podcast episode index for ordering and feed tags (e.g. `<itunes:episode>`); independent of `podcastNote` wording.
   episodeNumber Int @default(1)
 
+  /// Publisher username (from sign-in) when the entry was first created; unchanged on edit.
+  publishedBy String?
+
   /// Axis-only strategist notes — revealed separately from Allies (not encrypted).
   secretNotesAxis String?
   /// Allies-only strategist notes — revealed separately from Axis (not encrypted).

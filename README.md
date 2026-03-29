@@ -18,7 +18,7 @@ A small web app for **[War With A Mate](https://warwithamate.co.uk/)**–style p
 - **Turn navigator (sidebar)**  
   - **Game-turns** are listed **newest first** (highest turn number at the top).  
   - Each game-turn is a **`<details>` block**, **collapsed by default**.  
-  - Expanding a turn lists **every session** (date + title), **newest played date first**, with links to **`/?turn=N#session-{id}`** so the main column scrolls to that entry.  
+  - Expanding a turn lists **every session** (date, **publisher username** when recorded, + title), **newest played date first**, with links to **`/?turn=N#session-{id}`** so the main column scrolls to that entry.  
   - **Turn N** in the summary row is a link to `?turn=N` without a hash (top of that turn’s list).  
   - Summary row shows progress bar, session count, and **Done** when the **full 15-step turn flow** is complete; the active turn (main column) is labeled **Shown →**.  
 - **Turn progress graphic**  
@@ -26,30 +26,31 @@ A small web app for **[War With A Mate](https://warwithamate.co.uk/)**–style p
   - **One combined flow**: initiative and naval, strategic and convoy air, stores and water/attrition, then for each **Ops Stage** in order **air → supply → land** — **15 checkpoints** merged across sessions (OR logic).  
 - **Session list for the selected turn**  
   - The main column shows **only the selected** turn’s sessions (`?turn=N`), **newest first** by played date. Session blocks have **`id="session-{id}"`** for hash navigation from the sidebar.  
-  - Each card shows title, summary, episode note, optional podcast link, optional images, and milestone chips for what that sitting completed.  
+  - Each card shows **session date** and **by** the **publisher username** (who first created the entry), title, summary, episode note, optional podcast link, optional images, and milestone dots for what that sitting completed.  
 - **Strategist notes** (optional per entry), **split by side**  
   - **`secretNotesAxis`** and **`secretNotesAllies`** are entered separately on publish; on the public log each side has its own **Reveal** / **Hide** control.  
   - Axis and Allies blocks use distinct styling; neither is shown until that side’s button is used.  
   - This is **not** encryption: determined readers can still inspect network or client data.
 
-### Publisher flow (`/publish/login`, `/publish`, `/publish/edit/[id]`)
+### Publisher flow (`/publish/login`, `/publish`, `/publish/new`, `/publish/edit/[id]`)
 
-- **Username / password** (from environment variables). Successful sign-in sets an **httpOnly** cookie holding a signed **JWT**; cookie **max-age** and token expiry are **14 days** (see `src/lib/auth.ts`).  
-- **Published sessions** list (**newest `playedAt` first**): **Edit** opens the full form for that entry; **Delete** asks for confirmation, then removes the row and **deletes image files** under `public/uploads/` for that session.  
-- **New session entry** form:  
+- **Username / password** (from environment variables). Successful sign-in sets an **httpOnly** cookie holding a signed **JWT**; cookie **max-age** and token expiry are **14 days** (see `src/lib/auth.ts`). The **username** is stored on each new session row as **`publishedBy`** (creator only; not overwritten on edit) and shown on the public log next to the session date.  
+- **`/publish`** — dashboard: **Publish a new session log** links to **`/publish/new`**; below that, the **Published sessions** list (**newest `playedAt` first**) with date and creator username when present. **Edit** opens the full form; **Delete** asks for confirmation, then removes the row and **deletes image files** under `public/uploads/` for that session.  
+- **`/publish/new`** — **New session entry** form:  
   - Game-turn number, session date (defaults to **now** in the browser’s local timezone).  
   - Title and summary (public-facing narrative).  
-  - **Episode #** stored as integer **`episodeNumber`** (pre-filled as **max existing episode + 1** for stable ordering and future RSS / `<itunes:episode>`); optional **episode detail** suffix is still composed into **`podcastNote`** as `Ep N` or `Ep N — …`.  
+  - **Episode #** as integer **`episodeNumber`** (pre-filled as **max existing episode + 1**); optional **episode detail** suffix is composed into **`podcastNote`** as `Ep N` or `Ep N — …`.  
   - Optional podcast URL.  
-  - Optional **Axis** and **Allies** strategist note fields (see above).  
-  - **Full turn flow** checklist (same 15 steps as the public graphic), in table order.  
+  - Optional **Axis** and **Allies** strategist note fields behind **Reveal** / **Hide** (same privacy idea as the public site).  
+  - **Interactive turn flow** graphic (15 steps, same as the public site) for milestones.  
   - Multiple **JPEG** uploads per entry; on **edit**, you can remove existing images or add more.  
+- **`/publish/edit/[id]`** — same form for an existing entry.  
 - **Sign out** clears the publisher cookie.
 
 ### Data model (high level)
 
 - **Campaign** (one is seeded; the UI assumes a primary campaign).  
-- **SessionEntry**: **`gameTurn`**, `playedAt`, title, summary, **`episodeNumber`** (int, for sort / RSS), composed **`podcastNote`** string, optional `podcastUrl`, optional **`secretNotesAxis`** / **`secretNotesAllies`**, land / air / logistics milestone booleans (aggregated into the single **15-step** public flow).  
+- **SessionEntry**: **`gameTurn`**, `playedAt`, **`publishedBy`** (optional string — publisher username set on **create** only), title, summary, **`episodeNumber`** (int, for sort / RSS), composed **`podcastNote`** string, optional `podcastUrl`, optional **`secretNotesAxis`** / **`secretNotesAllies`**, land / air / logistics milestone booleans (aggregated into the single **15-step** public flow). Older rows may have `publishedBy` null until backfilled or re-seeded.  
 - **SessionImage**: file path under `/uploads/…`.
 
 ### Scripts

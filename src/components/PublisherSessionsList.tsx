@@ -3,7 +3,10 @@ import type { SessionEntry } from "@prisma/client";
 import { DeleteSessionForm } from "@/components/DeleteSessionForm";
 
 /** List row: metadata + image count (no image blobs loaded). */
-type Entry = Pick<SessionEntry, "id" | "campaignId" | "episodeNumber" | "gameTurn" | "playedAt" | "title"> & {
+type Entry = Pick<
+  SessionEntry,
+  "id" | "campaignId" | "episodeNumber" | "gameTurn" | "playedAt" | "title" | "publishedBy"
+> & {
   _count: { images: number };
 };
 
@@ -42,6 +45,7 @@ export function PublisherSessionsList({ campaignId, entries }: Props) {
           <div className="min-w-0 flex-1">
             <p className="font-mono text-xs text-wwam-gold-light">
               Ep {e.episodeNumber} · Turn {e.gameTurn} · {formatWhen(e.playedAt)}
+              {e.publishedBy ? ` · by ${e.publishedBy}` : ""}
               {e._count.images > 0 ? ` · ${e._count.images} img` : ""}
             </p>
             <p className="mt-1 font-medium text-wwam-cream line-clamp-2">{e.title}</p>

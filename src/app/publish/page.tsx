@@ -27,6 +27,7 @@ export default async function PublishPage() {
           gameTurn: true,
           playedAt: true,
           title: true,
+          publishedBy: true,
           _count: { select: { images: true } },
         },
       },

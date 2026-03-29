@@ -9,6 +9,7 @@ export type TurnNavSession = {
   id: string;
   title: string;
   playedAt: Date | string;
+  publishedBy: string | null;
 };
 
 export type TurnNavItem = {
@@ -169,7 +170,10 @@ export function TurnSidebar({ turns, selectedTurn }: Props) {
                                 : "text-wwam-cream-muted hover:bg-wwam-gold/10 hover:text-wwam-cream",
                             ].join(" ")}
                           >
-                            <span className="font-mono text-[10px] text-wwam-dune">{formatSessionWhen(s.playedAt)}</span>
+                            <span className="font-mono text-[10px] text-wwam-dune">
+                              {formatSessionWhen(s.playedAt)}
+                              {s.publishedBy ? ` · ${s.publishedBy}` : ""}
+                            </span>
                             <span className="mt-0.5 block font-medium text-wwam-cream/95 line-clamp-2">
                               {idx + 1}. {s.title}
                             </span>

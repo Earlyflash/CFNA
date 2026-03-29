@@ -11,6 +11,7 @@ import { parseSessionFormFields } from "@/lib/sessionFormParse";
 const JPEG_MIME = new Set(["image/jpeg", "image/jpg"]);
 /** Per-file cap (server action body limit is 8 MiB in next.config). */
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const MAX_UPLOAD_FILES_PER_SUBMISSION = 8;
 
 function bufferLooksLikeJpeg(buf: Buffer): boolean {
   return buf.length >= 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff;
@@ -23,10 +24,13 @@ async function requirePrimaryCampaignId(): Promise<string> {
 }
 
 async function saveUploadedImages(entryId: string, formData: FormData) {
-  const uploadDir = path.join(process.cwd(), "public", "uploads");
+  const uploadDir = path.resolve(process.cwd(), "public", "uploads");
   await mkdir(uploadDir, { recursive: true });
 
-  const files = formData.getAll("images") as unknown as File[];
+  const files = (formData.getAll("images") as unknown as File[]).slice(
+    0,
+    MAX_UPLOAD_FILES_PER_SUBMISSION,
+  );
   for (const file of files) {
     if (!file || typeof file === "string" || !file.size) continue;
     if (file.size > MAX_IMAGE_BYTES) continue;
@@ -49,7 +53,14 @@ async function saveUploadedImages(entryId: string, formData: FormData) {
 
 function publicUrlToDiskPath(url: string): string | null {
   if (!url.startsWith("/uploads/")) return null;
-  return path.join(process.cwd(), "public", url.replace(/^\//, ""));
+  const relative = path.normalize(url.slice("/uploads/".length));
+  if (!relative || relative.includes("\0")) return null;
+  if (path.isAbsolute(relative) || relative.startsWith("..")) return null;
+
+  const uploadRoot = path.resolve(process.cwd(), "public", "uploads");
+  const resolved = path.resolve(uploadRoot, relative);
+  if (resolved !== uploadRoot && !resolved.startsWith(`${uploadRoot}${path.sep}`)) return null;
+  return resolved;
 }
 
 async function unlinkUploadMaybe(url: string) {
@@ -63,7 +74,8 @@ async function unlinkUploadMaybe(url: string) {
 }
 
 export async function createSessionEntry(formData: FormData) {
-  if (!(await getPublisherUsername())) {
+  const publisher = await getPublisherUsername();
+  if (!publisher) {
     throw new Error("Sign in required to publish.");
   }
 
@@ -76,6 +88,7 @@ export async function createSessionEntry(formData: FormData) {
   const entry = await prisma.sessionEntry.create({
     data: {
       campaignId,
+      publishedBy: publisher,
       gameTurn: p.gameTurn,
       playedAt: p.playedAt,
       title: p.title,
