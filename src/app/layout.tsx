@@ -1,10 +1,20 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Fraunces, Source_Sans_3, Geist_Mono } from "next/font/google";
+import { DesertBackdrop } from "@/components/DesertBackdrop";
+import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
+  display: "swap",
+});
+
+const sourceSans = Source_Sans_3({
+  variable: "--font-source",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
@@ -13,8 +23,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CFNA play log",
-  description: "Campaign for North Africa — podcast session log and turn progress",
+  title: {
+    default: "War With A Mate — CNA play log",
+    template: "%s · War With A Mate",
+  },
+  description:
+    "Campaign for North Africa: session-by-session play log from the War With A Mate podcast — both sides each episode, turn progress, and links.",
+  openGraph: {
+    title: "War With A Mate — CNA play log",
+    description: "North Africa, game-turn by game-turn: each episode covers both sides at the table.",
+  },
 };
 
 export default function RootLayout({
@@ -24,29 +42,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen font-sans antialiased`}>
-        <header className="border-b border-sand-200 bg-white/90 backdrop-blur">
-          <div className="mx-auto flex max-w-3xl flex-col gap-1 px-4 py-6 sm:px-6">
-            <p className="text-xs font-medium uppercase tracking-widest text-sand-600">Living play log</p>
-            <h1 className="text-2xl font-semibold tracking-tight text-sand-900">Campaign for North Africa</h1>
-            <p className="max-w-2xl text-sm text-sand-600">
-              Session notes from both sides, podcast links, and a combined view of where each game-turn sits in the
-              weekly sequence.
-            </p>
-          </div>
-        </header>
-        <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6">{children}</main>
-        <footer className="border-t border-sand-200 bg-sand-100/80 py-6 text-center text-xs text-sand-600">
-          Rules reference:{" "}
-          <a
-            href="https://github.com/tonicebrian/TheCampaignForNorthAfrica"
-            className="text-allied hover:underline"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            TheCampaignForNorthAfrica
-          </a>
-        </footer>
+      <body
+        className={`${fraunces.variable} ${sourceSans.variable} ${geistMono.variable} relative min-h-screen font-sans antialiased text-wwam-cream`}
+      >
+        <DesertBackdrop />
+        <SiteHeader />
+        <main className="relative z-[1] mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">{children}</main>
+        <SiteFooter />
       </body>
     </html>
   );

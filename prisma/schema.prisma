@@ -16,11 +16,6 @@ model Campaign {
   sessionEntries SessionEntry[]
 }
 
-enum SessionSide {
-  AXIS
-  ALLIED
-}
-
 model SessionEntry {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -28,11 +23,8 @@ model SessionEntry {
   campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   campaignId String
 
-  /// In-game week / turn index (CNA: one Game-Turn ≈ one week).
+  /// Game-turn index. CNA rules: one Game-Turn = one week of simulated campaign time; real-world table pace is often slower (e.g. ~a month per turn).
   gameTurn Int
-
-  /// Which faction filed this log (both sides can post).
-  side SessionSide
 
   /// Real-world session when play happened.
   playedAt DateTime
@@ -40,14 +32,37 @@ model SessionEntry {
   title       String
   summary     String
   podcastUrl  String?
+  /// Human-readable episode line (e.g. `Ep 12 — chapter note`). Sorting and RSS should use `episodeNumber`.
   podcastNote String?
 
-  /// Segments marked complete during this session (aggregated per turn for the graphic).
+  /// Podcast episode index for ordering and feed tags (e.g. `<itunes:episode>`); independent of `podcastNote` wording.
+  episodeNumber Int @default(1)
+
+  /// Axis-only strategist notes — revealed separately from Allies (not encrypted).
+  secretNotesAxis String?
+  /// Allies-only strategist notes — revealed separately from Axis (not encrypted).
+  secretNotesAllies String?
+
+  /// Land game — segments completed this session (aggregated per turn for the graphic).
   doneInitiative Boolean @default(false)
   doneNaval      Boolean @default(false)
   doneOpStage1   Boolean @default(false)
   doneOpStage2   Boolean @default(false)
   doneOpStage3   Boolean @default(false)
+
+  /// Air game — high-level checkpoints (Strategic stage, convoy air, land support per Ops Stage).
+  doneAirStrategic   Boolean @default(false)
+  doneAirConvoy      Boolean @default(false)
+  doneAirLandOs1     Boolean @default(false)
+  doneAirLandOs2     Boolean @default(false)
+  doneAirLandOs3     Boolean @default(false)
+
+  /// Logistics game — stores/water vs supply emphasis per Ops Stage (simplified checklist).
+  doneLogisticsStores           Boolean @default(false)
+  doneLogisticsWaterAttrition   Boolean @default(false)
+  doneLogisticsSupplyOs1        Boolean @default(false)
+  doneLogisticsSupplyOs2        Boolean @default(false)
+  doneLogisticsSupplyOs3        Boolean @default(false)
 
   images SessionImage[]
 }

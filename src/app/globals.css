@@ -3,11 +3,17 @@
 @tailwind utilities;
 
 :root {
-  --foreground: #1c1917;
-  --background: #faf6ef;
+  --foreground: #f5ebe0;
+  --background: #1a1210;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
 }
