@@ -53,6 +53,48 @@ A small web app for **[War With A Mate](https://warwithamate.co.uk/)**–style p
 - **SessionEntry**: **`gameTurn`**, `playedAt`, **`publishedBy`** (optional string — publisher username set on **create** only), title, summary, **`episodeNumber`** (int, for sort / RSS), composed **`podcastNote`** string, optional `podcastUrl`, optional **`secretNotesAxis`** / **`secretNotesAllies`**, land / air / logistics milestone booleans (aggregated into the single **15-step** public flow). Older rows may have `publishedBy` null until backfilled or re-seeded.  
 - **SessionImage**: file path under `/uploads/…`.
 
+### ERD
+
+Relationships use **onDelete: Cascade** in Prisma (deleting a campaign removes its sessions; deleting a session removes its images). **`SessionEntry`** also has **`createdAt`** plus **fifteen `done*` booleans** (initiative, naval, air, logistics, ops stages) omitted from the diagram for space — see [`prisma/schema.prisma`](prisma/schema.prisma).
+
+```mermaid
+erDiagram
+  Campaign ||--o{ SessionEntry : contains
+  SessionEntry ||--o{ SessionImage : contains
+
+  Campaign {
+    string id PK
+    string title
+    string tagline
+    datetime createdAt
+    datetime updatedAt
+  }
+
+  SessionEntry {
+    string id PK
+    string campaignId FK
+    int gameTurn
+    datetime playedAt
+    string title
+    string summary
+    int episodeNumber
+    string publishedBy
+    string podcastUrl
+    string podcastNote
+    string secretNotesAxis
+    string secretNotesAllies
+    datetime createdAt
+  }
+
+  SessionImage {
+    string id PK
+    string sessionEntryId FK
+    string url
+    string originalName
+    datetime createdAt
+  }
+```
+
 ### Scripts
 
 | Command        | Purpose                          |
