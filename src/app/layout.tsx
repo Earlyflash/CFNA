@@ -1,25 +1,27 @@
 import type { Metadata } from "next";
-import { Fraunces, Source_Sans_3, Geist_Mono } from "next/font/google";
-import { DesertBackdrop } from "@/components/DesertBackdrop";
+import { Playfair_Display, Lora, Special_Elite } from "next/font/google";
+import { NewsprintBackdrop } from "@/components/NewsprintBackdrop";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import "./globals.css";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
   subsets: ["latin"],
   display: "swap",
 });
 
-const sourceSans = Source_Sans_3({
-  variable: "--font-source",
+const lora = Lora({
+  variable: "--font-lora",
   subsets: ["latin"],
   display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const specialElite = Special_Elite({
+  variable: "--font-special-elite",
+  weight: "400",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -43,11 +45,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${fraunces.variable} ${sourceSans.variable} ${geistMono.variable} relative min-h-screen font-sans antialiased text-wwam-cream`}
+        className={`${playfair.variable} ${lora.variable} ${specialElite.variable} relative min-h-screen font-sans antialiased text-np-ink`}
       >
-        <DesertBackdrop />
+        <NewsprintBackdrop />
         <SiteHeader />
-        <main className="relative z-[1] mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">{children}</main>
+        <main className="relative z-[1] mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">{children}</main>
         <SiteFooter />
       </body>
     </html>

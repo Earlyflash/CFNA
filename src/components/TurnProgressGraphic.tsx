@@ -11,7 +11,6 @@ import styles from "./TurnProgressGraphic.module.css";
 type Props = {
   full: FullTurnProgress;
   subtitle?: string;
-  /** Steps checked in the focused session — drawn in red so they stand out from turn-wide progress. */
   sessionHighlightKeys?: ReadonlySet<TurnFlowMilestoneKey>;
 };
 
@@ -19,20 +18,18 @@ function segmentIntoDone(full: FullTurnProgress, toKey: TurnFlowMilestoneKey) {
   return flowMilestoneDone(full, toKey);
 }
 
-/** Text / stroke colour for flow arrows (matches previous segment “done” logic). */
 function segmentFlowColorClass(
   full: FullTurnProgress,
   toKey: TurnFlowMilestoneKey,
   sessionHighlightKeys?: ReadonlySet<TurnFlowMilestoneKey>
 ): string {
   if (sessionHighlightKeys?.has(toKey)) {
-    return "text-red-600 drop-shadow-[0_0_6px_rgba(220,38,38,0.35)]";
+    return "text-np-red";
   }
-  if (segmentIntoDone(full, toKey)) return "text-wwam-ink";
-  return "text-wwam-cream-muted";
+  if (segmentIntoDone(full, toKey)) return "text-np-ink";
+  return "text-np-ink-muted";
 }
 
-/** Down arrow between milestones inside one phase. */
 function VerticalStepFlowArrow({ colorClass }: { colorClass: string }) {
   return (
     <span className={[styles.arrowStepWrap, colorClass].join(" ")} aria-hidden>
@@ -44,7 +41,6 @@ function VerticalStepFlowArrow({ colorClass }: { colorClass: string }) {
   );
 }
 
-/** Larger down arrow between phase panels (mobile stack). */
 function VerticalPhaseGapArrow({ colorClass }: { colorClass: string }) {
   return (
     <span className={[styles.betweenPhasesMobile, colorClass].join(" ")} aria-hidden>
@@ -56,7 +52,6 @@ function VerticalPhaseGapArrow({ colorClass }: { colorClass: string }) {
   );
 }
 
-/** Right arrow between phase columns (desktop). */
 function HorizontalPhaseGapArrow({ colorClass }: { colorClass: string }) {
   return (
     <span className={[styles.betweenPhasesDesktop, colorClass].join(" ")} aria-hidden>
@@ -81,16 +76,16 @@ function StepNode({
   const sessionHit = sessionHighlightKeys?.has(milestone.key) ?? false;
 
   const circleClass = sessionHit
-    ? "border-red-700 bg-red-600 text-white shadow-md shadow-red-900/40 ring-2 ring-red-400/50"
+    ? "border-np-red bg-np-red text-white"
     : done
-      ? "border-wwam-ink bg-wwam-ink text-wwam-cream"
-      : "border-wwam-cream-muted/60 bg-white/90 text-wwam-cream-muted";
+      ? "border-np-ink bg-np-ink text-np-paper"
+      : "border-np-ink-muted bg-np-paper text-np-ink-muted";
 
   const labelClass = sessionHit
-    ? "font-bold text-red-800"
+    ? "font-bold text-np-red"
     : done
-      ? "text-wwam-ink"
-      : "text-wwam-dune";
+      ? "text-np-ink"
+      : "text-np-ink-muted";
 
   const ariaLabel = sessionHit
     ? `${milestone.label}, logged in this episode`
@@ -148,22 +143,24 @@ export function TurnProgressGraphic({ full, subtitle, sessionHighlightKeys }: Pr
   const groups = TURN_FLOW_COLUMN_GROUPS;
 
   return (
-    <div className="rounded-3xl border border-wwam-gold/30 bg-gradient-to-br from-wwam-card via-wwam-card to-[#efe4d4] p-6 shadow-xl shadow-black/25 sm:p-8">
+    <div className="border border-np-rule bg-np-paper p-5 shadow-print sm:p-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-wwam-dune">Game-turn progress</p>
-          <h2 className="font-mono text-2xl font-semibold text-wwam-ink sm:text-3xl">Turn {full.gameTurn}</h2>
-          {subtitle ? <p className="mt-1 max-w-3xl text-sm text-wwam-dune">{subtitle}</p> : null}
+          <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-np-ink-muted">War Progress</p>
+          <h2 className="font-display text-2xl font-bold text-np-ink sm:text-3xl">Turn {full.gameTurn}</h2>
+          {subtitle ? <p className="mt-1 max-w-3xl text-xs italic text-np-ink-muted">{subtitle}</p> : null}
         </div>
         <div className="text-right">
-          <p className="text-3xl font-semibold tabular-nums text-wwam-ink">{overallPct}%</p>
-          <p className="text-xs font-medium text-wwam-dune">{complete ? "Turn closed" : "In progress"}</p>
+          <p className="font-display text-3xl font-bold tabular-nums text-np-ink">{overallPct}%</p>
+          <p className="font-mono text-[10px] uppercase tracking-wider text-np-ink-muted">
+            {complete ? "Turn Closed" : "In Progress"}
+          </p>
         </div>
       </div>
 
-      <div className="mt-5 h-3 w-full overflow-hidden rounded-full bg-wwam-cream-muted/40">
+      <div className="mt-4 h-2.5 w-full overflow-hidden border border-np-ink bg-np-paper-dark">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-axis via-wwam-gold/80 to-allied transition-[width] duration-700 ease-out"
+          className="h-full bg-np-ink transition-[width] duration-700 ease-out"
           style={{ width: `${overallPct}%` }}
           role="progressbar"
           aria-label="Turn flow progress"
@@ -183,15 +180,12 @@ export function TurnProgressGraphic({ full, subtitle, sessionHighlightKeys }: Pr
               <div
                 className={[
                   styles.phasePanel,
-                  "rounded-2xl border px-3 py-4 sm:px-4",
-                  group.id === "opening"
-                    ? "border-wwam-gold/25 bg-white/50"
-                    : "border-wwam-gold/20 bg-white/40",
+                  "border border-np-rule px-3 py-3 sm:px-4",
                 ].join(" ")}
               >
                 <div className={styles.phaseHeader}>
-                  <p className="font-display text-sm font-semibold text-wwam-ink">{group.title}</p>
-                  <p className="mt-0.5 text-[10px] font-medium leading-snug text-wwam-dune">{group.subtitle}</p>
+                  <p className="font-display text-sm font-bold text-np-ink">{group.title}</p>
+                  <p className="mt-0.5 text-[10px] leading-snug text-np-ink-muted">{group.subtitle}</p>
                 </div>
                 <VerticalStepColumn
                   full={full}
@@ -221,17 +215,17 @@ export function TurnProgressGraphic({ full, subtitle, sessionHighlightKeys }: Pr
       </div>
 
       {hasSessionHighlight ? (
-        <p className="mt-6 rounded-xl border border-red-200 bg-red-50/90 px-3 py-2 text-xs leading-relaxed text-red-950">
-          <strong className="font-semibold text-red-800">Red</strong> highlights steps ticked in{" "}
-          <strong className="font-semibold text-red-800">this episode</strong>. Filled dark nodes are still “done for
-          the turn” from any session; red calls out what this log contributed.
+        <p className="mt-5 border border-np-red/30 bg-np-paper-dark px-3 py-2 text-xs leading-relaxed text-np-ink">
+          <strong className="font-bold text-np-red">Red</strong> highlights steps ticked in{" "}
+          <strong className="font-bold text-np-red">this dispatch</strong>. Filled dark nodes are &ldquo;done for
+          the turn&rdquo; from any session; red marks what this log contributed.
         </p>
       ) : null}
-      <p className={hasSessionHighlight ? "mt-4 text-xs leading-relaxed text-wwam-dune" : "mt-10 text-xs leading-relaxed text-wwam-dune"}>
-        Arrows show <strong className="text-wwam-ink">flow</strong> top to bottom in each phase, then{" "}
-        <strong className="text-wwam-ink">Opening</strong> → each <strong className="text-wwam-ink">Ops Stage</strong>{" "}
-        (<strong className="text-wwam-ink">air → supply → land</strong>). Colour matches whether the next step is done
-        for the turn (or highlighted for this episode).
+      <p className={hasSessionHighlight ? "mt-3 text-xs leading-relaxed italic text-np-ink-muted" : "mt-6 text-xs leading-relaxed italic text-np-ink-muted"}>
+        Arrows show <strong className="not-italic text-np-ink">flow</strong> top to bottom in each phase, then{" "}
+        <strong className="not-italic text-np-ink">Opening</strong> &rarr; each{" "}
+        <strong className="not-italic text-np-ink">Ops Stage</strong>{" "}
+        (<strong className="not-italic text-np-ink">air &rarr; supply &rarr; land</strong>).
       </p>
     </div>
   );

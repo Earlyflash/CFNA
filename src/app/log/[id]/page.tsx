@@ -44,22 +44,22 @@ export default async function EpisodeLogPage({ params }: PageProps) {
   return (
     <div className="flex min-h-[calc(100dvh-10rem)] flex-col">
       <nav
-        className="sticky top-0 z-10 -mx-4 mb-8 border-b border-wwam-gold/25 bg-wwam-void/90 px-4 py-3 backdrop-blur-md sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10"
+        className="sticky top-0 z-10 -mx-4 mb-6 border-b-2 border-np-ink bg-np-paper px-4 py-3 sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10"
         aria-label="Episode navigation"
       >
         <Link
           href={backHref}
-          className="inline-flex items-center gap-2 text-sm font-semibold text-wwam-gold-light transition hover:text-wwam-cream"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-np-ink transition hover:text-np-red"
         >
-          <span aria-hidden>←</span>
+          <span aria-hidden>&larr;</span>
           Back to play log
-          <span className="font-mono text-xs font-normal text-wwam-cream-muted">
+          <span className="font-mono text-xs font-normal text-np-ink-muted">
             (turn {entry.gameTurn}, ep {entry.episodeNumber})
           </span>
         </Link>
       </nav>
 
-      <div className="space-y-10">
+      <div className="space-y-8">
         <section aria-labelledby="episode-graphic-heading">
           <h1 id="episode-graphic-heading" className="sr-only">
             Turn {entry.gameTurn} progress for this episode
@@ -67,7 +67,7 @@ export default async function EpisodeLogPage({ params }: PageProps) {
           <TurnProgressGraphic
             full={fullTurn}
             sessionHighlightKeys={sessionHighlightKeys}
-            subtitle={`Episode “${entry.title}” — merged turn progress below; red marks what this log checked off.`}
+            subtitle={`Dispatch "${entry.title}" — merged turn progress below; red marks what this log checked off.`}
           />
         </section>
 

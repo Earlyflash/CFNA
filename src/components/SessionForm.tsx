@@ -11,7 +11,6 @@ import { sessionCheckedFlowKeys, TURN_FLOW_MILESTONES } from "@/lib/turnProgress
 import { PublisherStrategistNotesField } from "@/components/PublisherStrategistNotesField";
 import { SessionTurnFlowPicker } from "@/components/SessionTurnFlowPicker";
 
-/** `datetime-local` value in the user's local timezone (no seconds). */
 function formatDatetimeLocal(d: Date) {
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
@@ -21,9 +20,9 @@ function SubmitButton({ variant, isEdit }: { variant: "default" | "publish"; isE
   const { pending } = useFormStatus();
   const cls =
     variant === "publish"
-      ? "rounded-xl bg-gradient-to-r from-wwam-ink to-wwam-void px-5 py-3 text-sm font-semibold text-wwam-cream shadow-lg shadow-black/20 ring-1 ring-wwam-gold/30 hover:brightness-110 disabled:opacity-60"
-      : "rounded-lg bg-sand-900 px-4 py-2.5 text-sm font-medium text-sand-50 hover:bg-sand-800 disabled:opacity-60";
-  const label = pending ? "Saving…" : isEdit ? "Save changes" : "Publish session log";
+      ? "border-2 border-np-ink bg-np-ink px-5 py-3 text-sm font-bold uppercase tracking-wider text-np-paper transition hover:bg-np-ink-light disabled:opacity-60"
+      : "border border-np-rule bg-np-paper-dark px-4 py-2.5 text-sm font-semibold text-np-ink hover:bg-np-aged/40 disabled:opacity-60";
+  const label = pending ? "Saving\u2026" : isEdit ? "Save changes" : "Publish session log";
   return (
     <button type="submit" disabled={pending} className={cls}>
       {label}
@@ -63,12 +62,9 @@ export type SessionEditInitial = {
 type Props = {
   campaignId: string;
   defaultGameTurn: number;
-  /** Next episode index when creating (max episode + 1). */
   nextEpisodeNumber?: number;
   variant?: "default" | "publish";
-  /** When set, form updates this entry instead of creating. */
   editEntry?: SessionEditInitial | null;
-  /** Per-turn aggregate from other session logs (exclude current entry when editing). */
   peerProgressByTurn?: Record<number, FullTurnProgress>;
 };
 
@@ -103,22 +99,22 @@ export function SessionForm({
   const isPub = variant === "publish";
   const formShell = isPub
     ? "space-y-6"
-    : "space-y-6 rounded-2xl border border-sand-200 bg-white p-6 shadow-sm";
+    : "space-y-6 border border-np-rule bg-np-paper p-6";
 
-  const label = isPub ? "font-medium text-wwam-ink" : "font-medium text-sand-800";
+  const label = "font-semibold text-np-ink";
   const field = isPub
-    ? "mt-1 w-full rounded-xl border border-wwam-gold/25 bg-white px-3 py-2.5 text-wwam-ink placeholder:text-wwam-dune/60 focus:border-wwam-gold focus:outline-none focus:ring-1 focus:ring-wwam-gold"
-    : "mt-1 w-full rounded-lg border border-sand-300 px-3 py-2 text-sand-900";
-  const sub = isPub ? "text-sm text-wwam-dune" : "text-sm text-sand-600";
-  const titleC = isPub ? "text-lg font-semibold text-wwam-ink font-display" : "text-lg font-semibold text-sand-900";
+    ? "mt-1 w-full border-b-2 border-np-rule bg-transparent px-1 py-2 text-np-ink placeholder:text-np-ink-muted/50 focus:border-np-ink focus:outline-none"
+    : "mt-1 w-full border border-np-rule px-3 py-2 text-np-ink bg-np-paper focus:border-np-ink focus:outline-none";
+  const sub = "text-sm text-np-ink-muted";
+  const titleC = "font-display text-lg font-bold text-np-ink";
   const fs = isPub
-    ? "rounded-xl border border-wwam-gold/20 bg-wwam-cream/40 p-4"
-    : "rounded-xl border border-sand-200 bg-sand-50/80 p-4";
-  const leg = isPub ? "px-1 text-sm font-medium text-wwam-ink" : "px-1 text-sm font-medium text-sand-800";
-  const cb = isPub ? "text-sm text-wwam-ink" : "text-sm text-sand-800";
+    ? "border border-np-rule bg-np-paper-dark p-4"
+    : "border border-dashed border-np-rule bg-np-paper-dark p-4";
+  const leg = "px-1 text-sm font-semibold text-np-ink";
+  const cb = "text-sm text-np-ink";
   const fileIn = isPub
-    ? "mt-1 block w-full text-sm text-wwam-dune file:mr-3 file:rounded-lg file:border-0 file:bg-wwam-gold/20 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-wwam-ink hover:file:bg-wwam-gold/30"
-    : "mt-1 block w-full text-sm text-sand-700 file:mr-3 file:rounded-lg file:border-0 file:bg-sand-200 file:px-3 file:py-2 file:text-sm file:font-medium file:text-sand-900 hover:file:bg-sand-300";
+    ? "mt-1 block w-full text-sm text-np-ink-muted file:mr-3 file:border file:border-np-ink file:bg-np-paper file:px-3 file:py-2 file:text-sm file:font-semibold file:text-np-ink hover:file:bg-np-aged/30"
+    : "mt-1 block w-full text-sm text-np-ink-muted file:mr-3 file:border file:border-np-rule file:bg-np-paper file:px-3 file:py-2 file:text-sm file:font-medium file:text-np-ink hover:file:bg-np-aged/30";
 
   const formAction = isEdit ? updateSessionEntry : createSessionEntry;
 
@@ -128,11 +124,11 @@ export function SessionForm({
       {isEdit ? <input type="hidden" name="entryId" value={editEntry!.id} /> : null}
 
       <div>
-        <h2 className={titleC}>{isEdit ? "Edit session entry" : "New session entry"}</h2>
+        <h2 className={titleC}>{isEdit ? "Edit Session Entry" : "New Session Entry"}</h2>
         <p className={`mt-1 ${sub}`}>
           {isEdit
             ? "Update this log entry; changes appear on the public site after you save."
-            : "One entry per recording: cover both sides’ moves and stages for that sitting. Milestones you check off merge into the public turn graphic for that game-turn."}
+            : "One entry per recording: cover both sides\u2019 moves and stages for that sitting. Milestones you check off merge into the public turn graphic for that game-turn."}
         </p>
       </div>
 
@@ -165,7 +161,7 @@ export function SessionForm({
         <input
           name="title"
           type="text"
-          placeholder="e.g. Turn 4 — Ep 12: Ops Stage 1 movement & combat (both sides)"
+          placeholder="e.g. Turn 4 \u2014 Ep 12: Ops Stage 1 movement & combat (both sides)"
           className={field}
           required
           defaultValue={editEntry?.title ?? ""}
@@ -177,7 +173,7 @@ export function SessionForm({
         <textarea
           name="summary"
           rows={5}
-          placeholder="What happened at the table, what you’ll resume next time, notable dice or rule lookups…"
+          placeholder="What happened at the table, what you\u2019ll resume next time, notable dice or rule lookups\u2026"
           className={field}
           required
           defaultValue={editEntry?.summary ?? ""}
@@ -191,7 +187,7 @@ export function SessionForm({
             name="secretNotesAxis"
             legend="Axis strategist notes (optional)"
             hint="Axis-only planning, hunches, or experiments. On the public log this side is still behind its own Reveal. Not encrypted."
-            placeholder="e.g. Dummy stack near the wire — rules check next time…"
+            placeholder="e.g. Dummy stack near the wire \u2014 rules check next time\u2026"
             initialValue={editEntry?.secretNotesAxis ?? ""}
             fieldClass={field}
             subClass={sub}
@@ -202,8 +198,8 @@ export function SessionForm({
             side="allies"
             name="secretNotesAllies"
             legend="Allies strategist notes (optional)"
-            hint="Commonwealth / Allied-only notes. Independent Reveal on the public log and here so Axis/Allies publishers aren’t shown the other block by default. Not encrypted."
-            placeholder="e.g. Rail timing experiment — watch Axis truck commits…"
+            hint="Commonwealth / Allied-only notes. Independent Reveal on the public log and here so Axis/Allies publishers aren\u2019t shown the other block by default. Not encrypted."
+            placeholder="e.g. Rail timing experiment \u2014 watch Axis truck commits\u2026"
             initialValue={editEntry?.secretNotesAllies ?? ""}
             fieldClass={field}
             subClass={sub}
@@ -213,7 +209,7 @@ export function SessionForm({
         </>
       ) : (
         <>
-          <fieldset className="rounded-xl border border-dashed border-sand-400 bg-sand-50 p-4">
+          <fieldset className="border border-dashed border-np-rule bg-np-paper-dark p-4">
             <legend className={leg}>Axis strategist notes (optional)</legend>
             <p className={`mb-2 text-xs ${sub}`}>
               Axis-only planning, hunches, or experiments. Shown on the public log only after a separate <strong>Reveal</strong>{" "}
@@ -223,13 +219,13 @@ export function SessionForm({
               name="secretNotesAxis"
               rows={4}
               className={field}
-              placeholder="e.g. Dummy stack near the wire — rules check next time…"
+              placeholder="e.g. Dummy stack near the wire \u2014 rules check next time\u2026"
               aria-label="Axis strategist notes"
               defaultValue={editEntry?.secretNotesAxis ?? ""}
             />
           </fieldset>
 
-          <fieldset className="rounded-xl border border-dashed border-sand-400 bg-sand-50 p-4">
+          <fieldset className="border border-dashed border-np-rule bg-np-paper-dark p-4">
             <legend className={leg}>Allies strategist notes (optional)</legend>
             <p className={`mb-2 text-xs ${sub}`}>
               Commonwealth / Allied-only notes. Revealed independently of Axis. Not encrypted.
@@ -238,7 +234,7 @@ export function SessionForm({
               name="secretNotesAllies"
               rows={4}
               className={field}
-              placeholder="e.g. Rail timing experiment — watch Axis truck commits…"
+              placeholder="e.g. Rail timing experiment \u2014 watch Axis truck commits\u2026"
               aria-label="Allies strategist notes"
               defaultValue={editEntry?.secretNotesAllies ?? ""}
             />
@@ -268,7 +264,7 @@ export function SessionForm({
           <input
             name="podcastUrl"
             type="url"
-            placeholder="https://…"
+            placeholder="https://\u2026"
             className={field}
             defaultValue={editEntry?.podcastUrl ?? ""}
           />
@@ -283,13 +279,13 @@ export function SessionForm({
           className={field}
           value={podcastNoteSuffix}
           onChange={(e) => setPodcastNoteSuffix(e.target.value)}
-          placeholder="Optional: timestamp 14:20, chapter title, …"
+          placeholder="Optional: timestamp 14:20, chapter title, \u2026"
         />
         <span className={`mt-1 block text-xs ${sub}`}>
           Saved as:{" "}
-          <strong className={isPub ? "text-wwam-ink" : "text-sand-900"}>
+          <strong className="text-np-ink">
             Ep {episodeNumber}
-            {podcastNoteSuffix.trim() ? ` — ${podcastNoteSuffix.trim()}` : ""}
+            {podcastNoteSuffix.trim() ? ` \u2014 ${podcastNoteSuffix.trim()}` : ""}
           </strong>
         </span>
       </label>
@@ -297,9 +293,9 @@ export function SessionForm({
       <fieldset className={fs}>
         <legend className={leg}>Completed this session (full turn flow)</legend>
         <p className={`mb-3 text-xs ${sub}`}>
-          Same graphic as the public play log. <strong className={isPub ? "text-wwam-ink" : "text-sand-900"}>Dark</strong> steps are
-          already covered by other sessions this turn; tap <strong className={isPub ? "text-red-800" : "text-sand-900"}>red</strong>{" "}
-          for what <em>this</em> sitting finished. Opening, then each Ops Stage as air → supply → land.
+          Same graphic as the public play log. <strong className="text-np-ink">Dark</strong> steps are
+          already covered by other sessions this turn; tap <strong className="text-np-red">red</strong>{" "}
+          for what <em>this</em> sitting finished. Opening, then each Ops Stage as air &rarr; supply &rarr; land.
         </p>
         {isPub ? (
           <SessionTurnFlowPicker
@@ -309,7 +305,7 @@ export function SessionForm({
             initialSessionKeys={editEntry ? sessionCheckedFlowKeys(editEntry) : new Set()}
           />
         ) : (
-          <ol className="list-decimal space-y-2 pl-5 marker:font-mono marker:text-xs marker:text-sand-500">
+          <ol className="list-decimal space-y-2 pl-5 marker:font-mono marker:text-xs marker:text-np-ink-muted">
             {TURN_FLOW_MILESTONES.map((m) => (
               <li key={m.key} className="pl-1">
                 <label className={`flex cursor-pointer items-start gap-2 ${cb}`}>
@@ -317,7 +313,7 @@ export function SessionForm({
                     type="checkbox"
                     name={m.key}
                     defaultChecked={editEntry?.[m.key] ?? false}
-                    className="mt-0.5 h-4 w-4 shrink-0 rounded border-sand-400"
+                    className="mt-0.5 h-4 w-4 shrink-0 border-np-rule"
                   />
                   <span>{m.label}</span>
                 </label>
@@ -335,7 +331,7 @@ export function SessionForm({
             {editEntry!.images.map((img) => (
               <li
                 key={img.id}
-                className="flex gap-3 rounded-lg border border-wwam-gold/20 bg-white/80 p-2"
+                className="flex gap-3 border border-np-rule bg-np-paper p-2"
               >
                 <Image
                   src={img.url}
@@ -343,18 +339,18 @@ export function SessionForm({
                   width={96}
                   height={64}
                   unoptimized
-                  className="h-16 w-24 shrink-0 rounded-md object-cover"
+                  className="h-16 w-24 shrink-0 object-cover"
                 />
                 <label className={`flex min-w-0 flex-1 cursor-pointer items-start gap-2 ${cb}`}>
                   <input
                     type="checkbox"
                     name="removeImageId"
                     value={img.id}
-                    className="mt-1 h-4 w-4 rounded border-wwam-gold/40 text-wwam-ink"
+                    className="mt-1 h-4 w-4 border-np-rule text-np-ink"
                   />
                   <span className="break-words text-xs leading-snug">
-                    <span className="font-medium">Remove</span>
-                    <span className="mt-0.5 block text-wwam-dune">{img.originalName}</span>
+                    <span className="font-semibold">Remove</span>
+                    <span className="mt-0.5 block text-np-ink-muted">{img.originalName}</span>
                   </span>
                 </label>
               </li>
@@ -373,7 +369,7 @@ export function SessionForm({
         {isEdit ? (
           <Link
             href="/publish"
-            className="inline-flex items-center rounded-xl border border-wwam-gold/30 px-5 py-3 text-sm font-medium text-wwam-ink transition hover:bg-wwam-gold/10"
+            className="inline-flex items-center border border-np-rule px-5 py-3 text-sm font-semibold text-np-ink transition hover:bg-np-aged/30"
           >
             Cancel
           </Link>

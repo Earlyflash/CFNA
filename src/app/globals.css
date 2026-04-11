@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --foreground: #f5ebe0;
-  --background: #1a1210;
+  --foreground: #1a1a1a;
+  --background: #f5f0e1;
 }
 
 body {
@@ -15,5 +15,16 @@ body {
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+@layer base {
+  hr {
+    border-color: #8b7d6b;
+  }
+
+  ::selection {
+    background-color: #d4c5a9;
+    color: #1a1a1a;
   }
 }

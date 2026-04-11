@@ -8,14 +8,13 @@ export type TurnSessionGroup = {
 };
 
 type Props = {
-  /** Expects the selected turn only (sidebar / `?turn=` filter). */
   groups: TurnSessionGroup[];
 };
 
 export function SessionsByTurnAccordion({ groups }: Props) {
   if (!groups.length) {
     return (
-      <p className="rounded-2xl border border-wwam-gold/20 bg-wwam-ink/30 px-5 py-8 text-center text-sm text-wwam-cream-muted backdrop-blur-sm">
+      <p className="border border-np-rule px-5 py-8 text-center text-sm italic text-np-ink-muted">
         No sessions published yet.
       </p>
     );
@@ -24,8 +23,8 @@ export function SessionsByTurnAccordion({ groups }: Props) {
   const { turn, sessions } = groups[0]!;
   return (
     <div className="space-y-6">
-      <p className="font-mono text-sm text-wwam-gold-light">
-        Turn {turn} · {sessions.length} session{sessions.length === 1 ? "" : "s"} · newest first
+      <p className="font-mono text-sm text-np-ink-muted">
+        Turn {turn} &middot; {sessions.length} dispatch{sessions.length === 1 ? "" : "es"} &middot; newest first
       </p>
       {sessions.map((entry, index) => (
         <div
@@ -33,9 +32,9 @@ export function SessionsByTurnAccordion({ groups }: Props) {
           id={`session-${entry.id}`}
           className="scroll-mt-28"
         >
-          <p className="mb-2 font-mono text-xs font-semibold uppercase tracking-wider text-wwam-cream-muted">
+          <p className="mb-1 font-mono text-xs font-bold uppercase tracking-wider text-np-ink-muted">
             Ep {entry.episodeNumber}
-            {sessions.length > 1 ? ` · ${index + 1} of ${sessions.length} this turn` : ""}
+            {sessions.length > 1 ? ` \u2014 ${index + 1} of ${sessions.length} this turn` : ""}
           </p>
           <SessionEntryCard entry={entry} showTurnBadge={false} />
         </div>

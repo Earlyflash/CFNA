@@ -18,104 +18,96 @@ function formatDate(d: Date | string) {
 
 type Props = {
   entry: EntryWithImages;
-  /** Hide the inline “Turn n” line when the parent already shows the turn (e.g. accordion). */
   showTurnBadge?: boolean;
-  /** Title links to full episode view (off on `/log/[id]`). */
   showFullViewLink?: boolean;
 };
 
 export function SessionEntryCard({ entry: e, showTurnBadge = true, showFullViewLink = true }: Props) {
   return (
-    <article className="group relative overflow-hidden rounded-3xl border border-wwam-gold/20 bg-wwam-card/95 shadow-lg shadow-black/20 backdrop-blur-sm">
-      <div
-        className="absolute left-0 top-0 h-full w-1.5 bg-gradient-to-b from-axis via-wwam-gold to-allied"
-        aria-hidden
-      />
-      <div className="p-6 pl-7 sm:p-8 sm:pl-10">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="min-w-0 flex-1">
-            <span className="inline-block rounded-full border border-wwam-gold/35 bg-wwam-gold/15 px-3 py-1 text-xs font-bold uppercase tracking-wide text-wwam-ink">
-              Episode log
+    <article className="border-t-2 border-np-ink pt-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-np-ink-muted">
+              Dispatch
             </span>
             {showTurnBadge ? (
-              <span className="ml-2 font-mono text-sm font-medium text-wwam-dune">
-                Turn {e.gameTurn} · Ep {e.episodeNumber}
+              <span className="font-mono text-xs text-np-ink-muted">
+                Turn {e.gameTurn} &middot; Ep {e.episodeNumber}
               </span>
             ) : null}
-            {showFullViewLink ? (
-              <Link
-                href={`/log/${e.id}`}
-                className="group/ep mt-3 block rounded-md outline-none focus-visible:ring-2 focus-visible:ring-wwam-gold focus-visible:ring-offset-2 focus-visible:ring-offset-wwam-card"
-              >
-                <h3 className="font-display text-xl font-semibold text-wwam-ink underline-offset-4 transition group-hover/ep:text-allied group-hover/ep:underline sm:text-2xl">
-                  {e.title}
-                </h3>
-              </Link>
-            ) : (
-              <h3 className="font-display mt-3 text-xl font-semibold text-wwam-ink sm:text-2xl">{e.title}</h3>
-            )}
-            <p className="mt-1 text-xs font-medium text-wwam-dune">
-              {formatDate(e.playedAt)}
-              {e.publishedBy ? (
-                <>
-                  {" "}
-                  · by <span className="text-wwam-ink/80">{e.publishedBy}</span>
-                </>
-              ) : null}
-            </p>
           </div>
-          <SessionFlowMilestoneDots entry={e} />
-        </div>
-        <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-wwam-ink/90">{e.summary}</p>
-        {e.secretNotesAxis?.trim() || e.secretNotesAllies?.trim() ? (
-          <div className="mt-5 flex flex-col gap-4">
-            <SecretNotesReveal
-              text={e.secretNotesAxis}
-              idPrefix={`${e.id}-axis`}
-              side="axis"
-            />
-            <SecretNotesReveal
-              text={e.secretNotesAllies}
-              idPrefix={`${e.id}-allies`}
-              side="allies"
-            />
-          </div>
-        ) : null}
-        {e.podcastUrl ? (
-          <p className="mt-4 text-sm">
-            <a
-              href={e.podcastUrl}
-              className="inline-flex items-center gap-1 font-semibold text-allied underline-offset-2 hover:underline"
-              rel="noopener noreferrer"
-              target="_blank"
+
+          {showFullViewLink ? (
+            <Link
+              href={`/log/${e.id}`}
+              className="group/ep mt-1 block outline-none focus-visible:ring-2 focus-visible:ring-np-ink focus-visible:ring-offset-2 focus-visible:ring-offset-np-paper"
             >
-              Open episode
-              <span aria-hidden>↗</span>
-            </a>
-            {e.podcastNote ? <span className="text-wwam-dune"> — {e.podcastNote}</span> : null}
+              <h3 className="font-display text-xl font-bold text-np-ink underline-offset-2 transition group-hover/ep:underline sm:text-2xl">
+                {e.title}
+              </h3>
+            </Link>
+          ) : (
+            <h3 className="font-display mt-1 text-xl font-bold text-np-ink sm:text-2xl">{e.title}</h3>
+          )}
+
+          <p className="mt-1 text-xs italic text-np-ink-muted">
+            {formatDate(e.playedAt)}
+            {e.publishedBy ? (
+              <>
+                {" "}
+                &mdash; by <span className="font-semibold not-italic text-np-ink-light">{e.publishedBy}</span>
+              </>
+            ) : null}
           </p>
-        ) : e.podcastNote ? (
-          <p className="mt-4 text-sm text-wwam-dune">{e.podcastNote}</p>
-        ) : null}
-        {e.images.length ? (
-          <ul className="mt-6 flex flex-wrap gap-4">
-            {e.images.map((img) => (
-              <li
-                key={img.id}
-                className="relative h-44 w-60 overflow-hidden rounded-2xl border border-wwam-gold/25 bg-wwam-cream/50 shadow-inner"
-              >
-                <Image
-                  src={img.url}
-                  alt={img.originalName}
-                  fill
-                  className="object-cover transition duration-300 group-hover:scale-[1.02]"
-                  sizes="240px"
-                />
-              </li>
-            ))}
-          </ul>
-        ) : null}
+        </div>
+        <SessionFlowMilestoneDots entry={e} />
       </div>
+
+      <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-np-ink-light">{e.summary}</p>
+
+      {e.secretNotesAxis?.trim() || e.secretNotesAllies?.trim() ? (
+        <div className="mt-4 flex flex-col gap-3">
+          <SecretNotesReveal text={e.secretNotesAxis} idPrefix={`${e.id}-axis`} side="axis" />
+          <SecretNotesReveal text={e.secretNotesAllies} idPrefix={`${e.id}-allies`} side="allies" />
+        </div>
+      ) : null}
+
+      {e.podcastUrl ? (
+        <p className="mt-3 text-sm">
+          <span className="font-mono text-[10px] uppercase tracking-wider text-np-ink-muted">See also: </span>
+          <a
+            href={e.podcastUrl}
+            className="font-semibold text-np-red underline underline-offset-2 hover:text-np-red-light"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Listen to episode &#8599;
+          </a>
+          {e.podcastNote ? <span className="text-np-ink-muted"> &mdash; {e.podcastNote}</span> : null}
+        </p>
+      ) : e.podcastNote ? (
+        <p className="mt-3 text-sm italic text-np-ink-muted">{e.podcastNote}</p>
+      ) : null}
+
+      {e.images.length ? (
+        <ul className="mt-4 flex flex-wrap gap-4">
+          {e.images.map((img) => (
+            <li
+              key={img.id}
+              className="relative h-40 w-56 overflow-hidden border border-np-ink bg-np-paper-dark shadow-print"
+            >
+              <Image
+                src={img.url}
+                alt={img.originalName}
+                fill
+                className="object-cover"
+                sizes="224px"
+              />
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </article>
   );
 }

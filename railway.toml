@@ -1,0 +1,7 @@
+[build]
+buildCommand = "npm ci && npm run build"
+
+[deploy]
+startCommand = "npx prisma db push && npx prisma db seed && npm start"
+healthcheckPath = "/"
+restartPolicyType = "on_failure"

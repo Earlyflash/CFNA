@@ -22,9 +22,9 @@ export default async function PublishNewSessionPage() {
 
   if (!campaign) {
     return (
-      <p className="text-wwam-cream-muted">
-        No campaign in database. Run <code className="text-wwam-gold">npx prisma db push</code> and{" "}
-        <code className="text-wwam-gold">npm run db:seed</code>.
+      <p className="text-np-ink-muted">
+        No campaign in database. Run <code className="font-mono text-np-red">npx prisma db push</code> and{" "}
+        <code className="font-mono text-np-red">npm run db:seed</code>.
       </p>
     );
   }
@@ -47,21 +47,21 @@ export default async function PublishNewSessionPage() {
   const peerProgressByTurn = peerProgressByTurnFromEntries(entriesForPeer);
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 px-4 py-10 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-5xl space-y-6 px-4 py-10 sm:px-6 lg:px-8">
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link
           href="/publish"
-          className="font-medium text-wwam-gold-light underline-offset-2 hover:underline"
+          className="font-semibold text-np-ink underline underline-offset-2 hover:text-np-red"
         >
-          ← Back to published sessions
+          &larr; Back to published sessions
         </Link>
-        <span className="text-wwam-cream-muted">·</span>
-        <Link href="/" className="text-wwam-cream-muted underline-offset-2 hover:text-wwam-cream hover:underline">
+        <span className="text-np-rule">&middot;</span>
+        <Link href="/" className="text-np-ink-muted underline-offset-2 hover:text-np-ink hover:underline">
           View public log
         </Link>
       </div>
 
-      <div className="rounded-3xl border border-wwam-gold/15 bg-wwam-card p-6 shadow-xl shadow-black/20 sm:p-8">
+      <div className="border border-np-rule bg-np-paper p-6 shadow-print sm:p-8">
         <SessionForm
           key={`publish-new-${sessionEntryCount}`}
           campaignId={campaign.id}

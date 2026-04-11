@@ -3,13 +3,9 @@ import { flowMilestonesDoneInSession } from "@/lib/turnProgress";
 
 type Props = {
   entry: SessionEntry;
-  /** Smaller dots for tight headers (default). */
   size?: "sm" | "md";
 };
 
-/**
- * Compact turn-flow milestones as circles (same codes as the main turn graphic), for session cards.
- */
 export function SessionFlowMilestoneDots({ entry, size = "sm" }: Props) {
   const done = flowMilestonesDoneInSession(entry);
   if (!done.length) return null;
@@ -29,7 +25,7 @@ export function SessionFlowMilestoneDots({ entry, size = "sm" }: Props) {
         <div key={m.key} className="shrink-0" role="listitem">
           <div
             className={[
-              "flex items-center justify-center rounded-full border-wwam-ink bg-wwam-ink font-mono font-bold leading-none text-wwam-cream shadow-sm",
+              "flex items-center justify-center border-np-ink bg-np-ink font-mono font-bold leading-none text-np-paper",
               circle,
             ].join(" ")}
             title={m.label}
