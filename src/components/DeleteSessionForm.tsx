@@ -9,9 +9,9 @@ function DeleteButton() {
     <button
       type="submit"
       disabled={pending}
-      className="rounded-lg border border-red-900/40 bg-red-950/40 px-3 py-1.5 text-xs font-medium text-red-200 transition hover:bg-red-950/70 disabled:opacity-50"
+      className="border border-np-red/40 px-3 py-1.5 text-xs font-semibold text-np-red transition hover:bg-np-red hover:text-np-paper disabled:opacity-50"
     >
-      {pending ? "Deleting…" : "Delete"}
+      {pending ? "Deleting\u2026" : "Delete"}
     </button>
   );
 }
@@ -29,7 +29,7 @@ export function DeleteSessionForm({ entryId, campaignId, title }: Props) {
       onSubmit={(e) => {
         if (
           !confirm(
-            `Delete “${title.slice(0, 80)}${title.length > 80 ? "…" : ""}”? This removes the session and its images from disk and the public log.`,
+            `Delete "${title.slice(0, 80)}${title.length > 80 ? "\u2026" : ""}"? This removes the session and its images from disk and the public log.`,
           )
         ) {
           e.preventDefault();

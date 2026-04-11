@@ -18,7 +18,6 @@ import styles from "./TurnProgressGraphic.module.css";
 type Props = {
   gameTurn: number;
   peerProgressByTurn: Record<number, FullTurnProgress>;
-  /** Checked milestones for this log entry (edit) or empty (create). */
   initialSessionKeys: ReadonlySet<TurnFlowMilestoneKey>;
 };
 
@@ -31,11 +30,9 @@ function segmentFlowColorClass(
   toKey: TurnFlowMilestoneKey,
   sessionKeys: ReadonlySet<TurnFlowMilestoneKey>
 ): string {
-  if (sessionKeys.has(toKey)) {
-    return "text-red-600 drop-shadow-[0_0_6px_rgba(220,38,38,0.35)]";
-  }
-  if (segmentIntoDone(previewFull, toKey)) return "text-wwam-ink";
-  return "text-wwam-cream-muted";
+  if (sessionKeys.has(toKey)) return "text-np-red";
+  if (segmentIntoDone(previewFull, toKey)) return "text-np-ink";
+  return "text-np-ink-muted";
 }
 
 function VerticalStepFlowArrow({ colorClass }: { colorClass: string }) {
@@ -86,29 +83,29 @@ function InteractiveStepNode({
   const peerDone = flowMilestoneDone(peerFull, milestone.key);
 
   const circleClass = sessionOn
-    ? "border-red-700 bg-red-600 text-white shadow-md shadow-red-900/40 ring-2 ring-red-400/50"
+    ? "border-np-red bg-np-red text-white"
     : peerDone
-      ? "border-wwam-ink bg-wwam-ink text-wwam-cream"
-      : "border-wwam-cream-muted/60 bg-white/90 text-wwam-cream-muted";
+      ? "border-np-ink bg-np-ink text-np-paper"
+      : "border-np-ink-muted bg-np-paper text-np-ink-muted";
 
   const labelClass = sessionOn
-    ? "font-bold text-red-800"
+    ? "font-bold text-np-red"
     : peerDone
-      ? "text-wwam-ink"
-      : "text-wwam-dune";
+      ? "text-np-ink"
+      : "text-np-ink-muted";
 
   const aria = sessionOn
     ? `${milestone.label}, selected for this session`
     : peerDone
-      ? `${milestone.label}, already logged in another session this turn — click to add for this session`
-      : `${milestone.label}, not selected — click to mark done this session`;
+      ? `${milestone.label}, already logged in another session this turn \u2014 click to add for this session`
+      : `${milestone.label}, not selected \u2014 click to mark done this session`;
 
   return (
     <div className={styles.stepNode}>
       <button
         type="button"
         onClick={() => onToggle(milestone.key)}
-        className="flex w-full max-w-full flex-col items-center rounded-lg outline-none transition hover:opacity-95 focus-visible:ring-2 focus-visible:ring-wwam-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+        className="flex w-full max-w-full flex-col items-center outline-none transition hover:opacity-80 focus-visible:ring-2 focus-visible:ring-np-ink focus-visible:ring-offset-2 focus-visible:ring-offset-np-paper"
         aria-pressed={sessionOn}
         aria-label={aria}
       >
@@ -186,27 +183,31 @@ export function SessionTurnFlowPicker({ gameTurn, peerProgressByTurn, initialSes
   const groups = TURN_FLOW_COLUMN_GROUPS;
 
   return (
-    <div className="rounded-3xl border border-wwam-gold/30 bg-gradient-to-br from-wwam-card via-wwam-card to-[#efe4d4] p-5 shadow-xl shadow-black/25 sm:p-6">
+    <div className="border border-np-rule bg-np-paper p-5 shadow-print sm:p-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-wwam-dune">This session · game-turn {gameTurn}</p>
-          <h3 className="font-mono text-lg font-semibold text-wwam-ink sm:text-xl">Tap circles to match this recording</h3>
+          <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-np-ink-muted">
+            This session &middot; game-turn {gameTurn}
+          </p>
+          <h3 className="font-display text-lg font-bold text-np-ink sm:text-xl">Tap circles to match this recording</h3>
         </div>
         <div className="text-right">
-          <p className="text-2xl font-semibold tabular-nums text-wwam-ink">{overallPct}%</p>
-          <p className="text-xs font-medium text-wwam-dune">{complete ? "Full flow covered" : "In progress"}</p>
+          <p className="font-display text-2xl font-bold tabular-nums text-np-ink">{overallPct}%</p>
+          <p className="font-mono text-[10px] uppercase tracking-wider text-np-ink-muted">
+            {complete ? "Full flow covered" : "In progress"}
+          </p>
         </div>
       </div>
 
-      <p className="mt-3 text-xs leading-relaxed text-wwam-dune">
-        <strong className="text-wwam-ink">Dark</strong> = already marked in another session for this turn.{" "}
-        <strong className="text-red-800">Red</strong> = you are adding for <em>this</em> log (same as the public episode
+      <p className="mt-3 text-xs leading-relaxed text-np-ink-muted">
+        <strong className="text-np-ink">Dark</strong> = already marked in another session for this turn.{" "}
+        <strong className="text-np-red">Red</strong> = you are adding for <em>this</em> log (same as the public dispatch
         view). Percent includes both.
       </p>
 
-      <div className="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-wwam-cream-muted/40">
+      <div className="mt-4 h-2.5 w-full overflow-hidden border border-np-ink bg-np-paper-dark">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-axis via-wwam-gold/80 to-allied transition-[width] duration-500 ease-out"
+          className="h-full bg-np-ink transition-[width] duration-500 ease-out"
           style={{ width: `${overallPct}%` }}
           role="progressbar"
           aria-label="Combined turn flow if you save this session"
@@ -216,7 +217,7 @@ export function SessionTurnFlowPicker({ gameTurn, peerProgressByTurn, initialSes
         />
       </div>
 
-      <div className={styles.phaseGrid} role="group" aria-label="Turn flow — tap steps for this session">
+      <div className={styles.phaseGrid} role="group" aria-label="Turn flow \u2014 tap steps for this session">
         {groups.map((group, gi) => {
           const nextGroup = gi < groups.length - 1 ? groups[gi + 1]! : null;
           const toNextPhaseKey = nextGroup?.milestones[0]?.key;
@@ -226,15 +227,12 @@ export function SessionTurnFlowPicker({ gameTurn, peerProgressByTurn, initialSes
               <div
                 className={[
                   styles.phasePanel,
-                  "rounded-2xl border px-3 py-4 sm:px-4",
-                  group.id === "opening"
-                    ? "border-wwam-gold/25 bg-white/50"
-                    : "border-wwam-gold/20 bg-white/40",
+                  "border border-np-rule px-3 py-3 sm:px-4",
                 ].join(" ")}
               >
                 <div className={styles.phaseHeader}>
-                  <p className="font-display text-sm font-semibold text-wwam-ink">{group.title}</p>
-                  <p className="mt-0.5 text-[10px] font-medium leading-snug text-wwam-dune">{group.subtitle}</p>
+                  <p className="font-display text-sm font-bold text-np-ink">{group.title}</p>
+                  <p className="mt-0.5 text-[10px] leading-snug text-np-ink-muted">{group.subtitle}</p>
                 </div>
                 <InteractiveStepColumn
                   peerFull={peerFull}
@@ -262,9 +260,9 @@ export function SessionTurnFlowPicker({ gameTurn, peerProgressByTurn, initialSes
       </div>
 
       {hasSessionSelection ? (
-        <p className="mt-5 rounded-xl border border-red-200 bg-red-50/90 px-3 py-2 text-xs leading-relaxed text-red-950">
-          <strong className="font-semibold text-red-800">Red</strong> steps will be saved on this entry. Dark steps are
-          only a guide from other sessions — toggle red to add what this sitting finished.
+        <p className="mt-5 border border-np-red/30 bg-np-paper-dark px-3 py-2 text-xs leading-relaxed text-np-ink">
+          <strong className="font-bold text-np-red">Red</strong> steps will be saved on this entry. Dark steps are
+          only a guide from other sessions &mdash; toggle red to add what this sitting finished.
         </p>
       ) : null}
 

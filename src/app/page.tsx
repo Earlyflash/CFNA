@@ -5,7 +5,7 @@ import { TurnProgressGraphic } from "@/components/TurnProgressGraphic";
 import { TurnSidebar, type TurnNavItem } from "@/components/TurnSidebar";
 import { SessionsByTurnAccordion, type TurnSessionGroup } from "@/components/SessionsByTurnAccordion";
 import { ScrollToHash } from "@/components/ScrollToHash";
-import { CompassMark } from "@/components/CompassMark";
+import { OrnamentalRule } from "@/components/OrnamentalRule";
 import { sortSessionsByNewestFirst } from "@/lib/sessionSort";
 
 export const dynamic = "force-dynamic";
@@ -29,9 +29,9 @@ export default async function HomePage({ searchParams }: PageProps) {
 
   if (!campaign) {
     return (
-      <p className="rounded-2xl border border-wwam-gold/20 bg-wwam-ink/50 p-6 text-wwam-cream-muted backdrop-blur-sm">
-        No campaign found. Run <code className="text-wwam-gold-light">npx prisma db push</code> and{" "}
-        <code className="text-wwam-gold-light">npm run db:seed</code>.
+      <p className="border border-np-rule p-6 text-np-ink-muted">
+        No campaign found. Run <code className="font-mono text-np-red">npx prisma db push</code> and{" "}
+        <code className="font-mono text-np-red">npm run db:seed</code>.
       </p>
     );
   }
@@ -73,41 +73,47 @@ export default async function HomePage({ searchParams }: PageProps) {
     return { turn: t, sessions };
   });
 
-  /** Main list follows the sidebar / `?turn=` — only this turn’s sessions. */
   const visibleTurnGroups = allTurnGroups.filter((g) => g.turn === selectedTurn);
 
   const hasSessions = campaign.sessionEntries.length > 0;
 
   return (
-    <div className="space-y-12">
-      <section className="relative overflow-hidden rounded-3xl border border-wwam-gold/25 bg-wwam-ink/40 p-8 shadow-glow backdrop-blur-md sm:p-10">
-        <div className="absolute -right-8 -top-8 text-wwam-gold/10">
-          <CompassMark className="h-40 w-40" />
-        </div>
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-wwam-gold-light">Play log</p>
-        <h2 className="font-display mt-2 text-balance text-3xl font-semibold tracking-tight text-wwam-cream sm:text-4xl">
+    <div className="space-y-8">
+      {/* Above the fold */}
+      <section className="border-b-3 border-double border-np-ink pb-6 text-center">
+        <p className="font-mono text-xs font-bold uppercase tracking-[0.3em] text-np-ink-muted">
+          Latest Dispatches
+        </p>
+        <h2 className="font-display mt-2 text-balance text-3xl font-black uppercase tracking-tight text-np-ink sm:text-4xl lg:text-5xl">
           {campaign.title}
         </h2>
         {campaign.tagline ? (
-          <p className="mt-4 max-w-4xl text-lg leading-relaxed text-wwam-cream-muted">{campaign.tagline}</p>
+          <p className="mx-auto mt-3 max-w-3xl text-lg italic leading-relaxed text-np-ink-light">{campaign.tagline}</p>
         ) : null}
+        <div className="mx-auto mt-4 flex items-center justify-center gap-3 font-mono text-sm text-np-ink-muted">
+          <span className="h-px w-12 bg-np-rule" />
+          <span>Turn {selectedTurn} {selectedTurn === latestTurn ? "(Current)" : "(Archive)"}</span>
+          <span className="h-px w-12 bg-np-rule" />
+        </div>
       </section>
 
-      <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-10">
+      <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-8">
         {hasSessions ? (
           <aside className="lg:order-0 lg:shrink-0">
             <TurnSidebar turns={sidebarTurns} selectedTurn={selectedTurn} />
           </aside>
         ) : null}
 
-        <div className="min-w-0 flex-1 space-y-10 lg:order-1">
+        <div className="min-w-0 flex-1 space-y-8 lg:order-1">
           <Suspense fallback={null}>
             <ScrollToHash />
           </Suspense>
+
           <section className="space-y-3">
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <h3 className="font-display text-xl font-semibold text-wwam-cream">Where this turn stands</h3>
-              <p className="font-mono text-sm text-wwam-gold-light">Turn {selectedTurn}</p>
+            <div className="border-b-2 border-np-ink pb-1">
+              <h3 className="font-display text-lg font-bold uppercase tracking-wide text-np-ink sm:text-xl">
+                War Situation &mdash; Turn {selectedTurn}
+              </h3>
             </div>
             <TurnProgressGraphic
               full={selectedFull}
@@ -119,31 +125,34 @@ export default async function HomePage({ searchParams }: PageProps) {
             />
           </section>
 
-          <section className="space-y-5">
-            <div>
-              <h3 className="font-display text-xl font-semibold text-wwam-cream">What happened</h3>
-              <p className="mt-1 max-w-3xl text-sm text-wwam-cream-muted">
-                Sessions for <strong className="font-medium text-wwam-cream">turn {selectedTurn}</strong>, newest first.
-                Use the sidebar: expand a turn, then pick a session to jump here (or open the whole turn).
-              </p>
+          <OrnamentalRule />
+
+          <section className="space-y-4">
+            <div className="border-b-2 border-np-ink pb-1">
+              <h3 className="font-display text-lg font-bold uppercase tracking-wide text-np-ink sm:text-xl">
+                Field Dispatches
+              </h3>
             </div>
+            <p className="text-sm text-np-ink-muted">
+              Sessions for <strong className="font-semibold text-np-ink">turn {selectedTurn}</strong>, newest first.
+              Expand a turn in the index to see sessions or jump to a specific dispatch.
+            </p>
             {hasSessions ? (
               visibleTurnGroups.length > 0 ? (
                 <SessionsByTurnAccordion groups={visibleTurnGroups} />
               ) : (
-                <p className="rounded-2xl border border-wwam-gold/20 bg-wwam-ink/30 px-5 py-8 text-center text-sm text-wwam-cream-muted backdrop-blur-sm">
+                <p className="border border-np-rule px-5 py-8 text-center text-sm italic text-np-ink-muted">
                   No sessions recorded for turn {selectedTurn}.
                 </p>
               )
             ) : (
-              <p className="rounded-2xl border border-wwam-gold/20 bg-wwam-ink/30 px-5 py-8 text-center text-sm text-wwam-cream-muted backdrop-blur-sm">
-                No sessions published yet. When the team posts recaps, they’ll show up here.
+              <p className="border border-np-rule px-5 py-8 text-center text-sm italic text-np-ink-muted">
+                No sessions published yet. When the team posts recaps, they&apos;ll appear here.
               </p>
             )}
           </section>
         </div>
       </div>
-
     </div>
   );
 }

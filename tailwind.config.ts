@@ -9,26 +9,31 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-source)", "system-ui", "sans-serif"],
-        display: ["var(--font-fraunces)", "Georgia", "serif"],
-        mono: ["var(--font-geist-mono)", "ui-monospace", "monospace"],
+        sans: ["var(--font-lora)", "Georgia", "serif"],
+        display: ["var(--font-playfair)", "Georgia", "serif"],
+        mono: ["var(--font-special-elite)", "Courier New", "monospace"],
       },
       colors: {
-        wwam: {
-          void: "#1a1210",
-          ink: "#120c0a",
-          cream: "#f5ebe0",
-          "cream-muted": "#b5a394",
-          card: "#f9f3ea",
-          gold: "#b8922e",
-          "gold-light": "#d4b85c",
-          dune: "#6b5344",
+        np: {
+          paper: "#f5f0e1",
+          "paper-dark": "#e8dcc8",
+          ink: "#1a1a1a",
+          "ink-light": "#3d3d3d",
+          "ink-muted": "#6b6b6b",
+          rule: "#8b7d6b",
+          "rule-light": "#c4b79f",
+          aged: "#d4c5a9",
+          red: "#8b0000",
+          "red-light": "#a52a2a",
         },
         axis: { DEFAULT: "#7c2d12", muted: "#9a3412", soft: "#fecaca" },
-        allied: { DEFAULT: "#1e3a5f", muted: "#1d4ed8", soft: "#bfdbfe" },
+        allied: { DEFAULT: "#1e3a5f", muted: "#2c5282", soft: "#bfdbfe" },
       },
       boxShadow: {
-        glow: "0 0 40px -10px rgba(201, 162, 39, 0.35)",
+        print: "2px 2px 0px rgba(0, 0, 0, 0.08)",
+      },
+      borderWidth: {
+        3: "3px",
       },
     },
   },
